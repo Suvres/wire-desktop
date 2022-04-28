@@ -11,6 +11,7 @@ pipeline {
                 sh 'docker-compose up b_agent'
                 sh 'git config http.version HTTP/1.1'
                 sh 'git config http.postBuffer 157286400'
+                sh 'git config pull.rebase false'
             }
             post {
                 failure {  
@@ -38,7 +39,13 @@ pipeline {
             steps {
                 sh 'git checkout release '
                 sh 'git pull origin master'
-                sh 'var=$(git tag -l | grep "jenkins-release-" | awk \'{sub(/jenkins-release-/, "")}1\' | sort -rn | awk \'{ print $1+1}\' | head -n1); if [[ $var == "" ]]; then var=0; fi; git tag -a jenkins-release-$var;'     
+                sh '''#!/bin/bash
+                     var=$(git tag -l | grep "jenkins-release-" | awk \'{sub(/jenkins-release-/, "")}1\' | sort -rn | awk \'{ print $1+1}\' | head -n1); 
+                     if [[ $var == "" ]]; then 
+                        var=0; 
+                     fi; 
+                     git tag -a jenkins-release-$var; 
+                   '''     
                 sh 'GIT_CURL_VERBOSE=1 git push --folow-tags'
             }
             post {
