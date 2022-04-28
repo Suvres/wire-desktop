@@ -40,7 +40,7 @@ pipeline {
                 sh 'git checkout release '
                 sh 'git pull origin master'
                 sh './git-tag.sh'     
-                sh 'GIT_CURL_VERBOSE=1 git push --folow-tags'
+                sh 'GIT_CURL_VERBOSE=1 git push --follow-tags'
             }
             post {
                     failure {  
